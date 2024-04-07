@@ -1,0 +1,32 @@
+---
+# vars file for k8s-nodes-prepare
+
+# https://kubernetes.io/docs/reference/networking/ports-and-protocols/
+master_node_open_ports_required:
+  individual_ports:
+    - 6443
+    - 2379
+    - 2380
+    - 10250
+    - 10259
+    - 10257
+
+worker_node_open_ports_required:
+  individual_ports:
+    - 10250
+    - 2379
+  port_ranges:
+    - start: 30000
+      end: 32767
+
+docker_required_packeges:
+  - name: "docker-ce"
+  - name: "docker-ce-cli"
+  - name: "containerd.io"
+  - name: "docker-buildx-plugin"
+  - name: "docker-compose-plugin"
+
+k8s_required_packeges:
+  - name: "kubelet"
+  - name: "kubeadm"
+  - name: "kubectl"

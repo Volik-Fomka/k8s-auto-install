@@ -2,6 +2,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", 
     inline: <<-SHELL
       dnf upgrade -y
+      setenforce 0
       sed -i 's/^BLACKLIST_RPC=/\\#BLACKLIST_RPC=/' /etc/sysconfig/qemu-ga
       sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config
       echo "10.0.0.10  master-node" >> /etc/hosts
