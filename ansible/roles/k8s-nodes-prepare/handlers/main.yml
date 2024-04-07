@@ -1,0 +1,8 @@
+---
+# handlers file for k8s-nodes-prepare
+
+- name: restart containerd
+  ansible.builtin.service:
+    name: containerd
+    state: restarted
+    enabled: yes
