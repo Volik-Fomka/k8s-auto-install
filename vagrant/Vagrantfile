@@ -1,0 +1,41 @@
+Vagrant.configure("2") do |config|
+  config.vm.provision "shell", 
+    inline: <<-SHELL
+      dnf upgrade -y
+      sed -i 's/^BLACKLIST_RPC=/\\#BLACKLIST_RPC=/' /etc/sysconfig/qemu-ga
+      sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/selinux/config
+      echo "10.0.0.10  master-node" >> /etc/hosts
+      echo "10.0.0.11  worker-node01" >> /etc/hosts
+      echo "10.0.0.12  worker-node02" >> /etc/hosts
+    SHELL
+
+  config.vm.define "master" do |master|
+    master.vm.box = "almalinux/9"
+    master.vm.hostname = "master-node"
+    master.vm.network "private_network", ip: "10.0.0.10"
+    master.vm.provider :libvirt do |libvirt|
+      libvirt.memory = 2048
+      libvirt.cpus = 4
+    end
+  end
+
+  config.vm.define "worker_node_1" do |worker_node_1|
+    worker_node_1.vm.box = "almalinux/9"
+    worker_node_1.vm.hostname = "worker-node01"
+    worker_node_1.vm.network "private_network", ip: "10.0.0.11"
+    worker_node_1.vm.provider :libvirt do |libvirt|
+      libvirt.memory = 6144
+      libvirt.cpus = 4
+    end
+  end
+
+  config.vm.define "worker_node_2" do |worker_node_2|
+    worker_node_2.vm.box = "almalinux/9"
+    worker_node_2.vm.hostname = "worker-node02"
+    worker_node_2.vm.network "private_network", ip: "10.0.0.12"
+    worker_node_2.vm.provider :libvirt do |libvirt|
+      libvirt.memory = 6144
+      libvirt.cpus = 4
+    end
+  end
+end
