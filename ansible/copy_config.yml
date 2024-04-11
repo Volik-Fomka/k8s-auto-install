@@ -1,0 +1,11 @@
+- name: Copy Kubernetes configuration to local machine
+  hosts: masters
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Fetch kube config from master nodes
+      ansible.builtin.fetch:
+        src: "/home/vagrant/.kube/config"
+        dest: "//home/volik/.kube/{{ inventory_hostname }}-kubeconfig"
+        flat: true

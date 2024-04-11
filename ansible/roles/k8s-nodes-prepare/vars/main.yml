@@ -19,13 +19,6 @@ worker_node_open_ports_required:
     - start: 30000
       end: 32767
 
-docker_required_packeges:
-  - name: "docker-ce"
-  - name: "docker-ce-cli"
-  - name: "containerd.io"
-  - name: "docker-buildx-plugin"
-  - name: "docker-compose-plugin"
-
 k8s_required_packeges:
   - name: "kubelet"
   - name: "kubeadm"
