@@ -1,0 +1,5 @@
+- name: K8s-master-node kubeadm init
+  hosts: masters
+  become: true
+  roles:
+    - k8s-master-node

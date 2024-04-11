@@ -1,2 +1,38 @@
 ---
 # tasks file for k8s-master-node
+
+# https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart
+
+- name: Initialize the cluster
+  shell: sudo kubeadm init --pod-network-cidr=192.168.0.0/16 > cluster_initialized.txt
+  args:
+    chdir: $HOME
+    creates: cluster_initialized.txt
+
+- name: Create .kube directory
+  become_user: vagrant
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+
+- name: Copy admin.conf to user's kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/vagrant/.kube/config
+    remote_src: yes
+    owner: vagrant
+
+- name: Install Tigera Calico operator
+  become_user: vagrant
+  shell: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/tigera-operator.yaml > pod_network_setup.txt
+  args:
+    chdir: $HOME
+    creates: pod_network_setup.txt
+
+- name: Install Calico from custom resource
+  become_user: vagrant
+  shell: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/custom-resources.yaml >> pod_network_setup.txt
+  args:
+    chdir: $HOME
+    creates: pod_network_setup.txt

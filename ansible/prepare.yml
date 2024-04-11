@@ -1,4 +1,5 @@
-- hosts: all
+- name: K8s-nodes-prepare
+  hosts: all
   become: true
   roles:
     - k8s-nodes-prepare
