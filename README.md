@@ -9,12 +9,12 @@
 1. Создаём машины с помощью Vagrant
    1.1. Зайти в k8s-auto-install/vagrant
    1.2. Запускаем машины
-	   ```shell
-	   vagrant up --provider=libvirt
-		 ```
-2. Для полностью автоматизированного решения запускаем
+   	```shell
+    	vagrant up --provider=libvirt
+    	```
+3. Для полностью автоматизированного решения запускаем
    
    ```shell
    ansible-playbook all_in_one.yml -i inventory.yml 
    ```
-3. Конфиг для подключения к кластеру будет расположен в ~/$HOME/.kube
+4. Конфиг для подключения к кластеру будет расположен в ~/$HOME/.kube
