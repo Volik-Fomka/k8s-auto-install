@@ -10,7 +10,7 @@
    1.1. Зайти в k8s-auto-install/vagrant
    1.2. Запускаем машины
    	```shell
-    	vagrant up --provider=libvirt
+    vagrant up --provider=libvirt
     
 3. Для полностью автоматизированного решения запускаем
    
