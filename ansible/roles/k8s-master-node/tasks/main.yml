@@ -3,15 +3,16 @@
 
 # https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart
 
-- name: Initialize the cluster
-  ansible.builtin.shell: sudo kubeadm init --pod-network-cidr=192.168.0.0/16 > cluster_initialized.txt
+- name: Initialize the cluster and check execution
+  ansible.builtin.command: sudo kubeadm init --pod-network-cidr=192.168.0.0/16
   args:
     chdir: $HOME
-    creates: cluster_initialized.txt
+  register: kubeadm_init_result
+  changed_when: kubeadm_init_result.rc!= 0
 
 - name: Create .kube directory
-  ansible.builtin.become_user: vagrant
-  file:
+  become_user: vagrant
+  ansible.builtin.file:
     path: $HOME/.kube
     state: directory
     mode: "0755"
@@ -28,15 +29,27 @@
     mode: "0644"
 
 - name: Install Tigera Calico operator
-  ansible.builtin.become_user: vagrant
-  shell: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/tigera-operator.yaml > pod_network_setup.txt
+  become_user: vagrant
+  ansible.builtin.command: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/tigera-operator.yaml
   args:
     chdir: $HOME
-    creates: pod_network_setup.txt
+    creates: tigera_operator_setup.txt
+  register: tigera_operator_result
+
+- name: Wait for a bit before installing Calico custom resource
+  ansible.builtin.pause:
+    minutes: 3
+  when: tigera_operator_result is succeeded
 
 - name: Install Calico from custom resource
-  ansible.builtin.become_user: vagrant
-  shell: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/custom-resources.yaml >> pod_network_setup.txt
+  become_user: vagrant
+  ansible.builtin.command: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/custom-resources.yaml
   args:
     chdir: $HOME
-    creates: pod_network_setup.txt
+  when: tigera_operator_result is succeeded
+  register: calico_custom_resource_result
+
+- name: Wait for a bit before installing Calico custom resource
+  ansible.builtin.pause:
+    minutes: 3
+  when: tigera_operator_result is succeeded
