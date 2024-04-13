@@ -148,6 +148,23 @@
     dest: /opt/cni/bin
     remote_src: true
 
+- name: Configure NetworkManager for Calico
+  ansible.builtin.template:
+    src: calico.conf.j2
+    dest: /etc/NetworkManager/conf.d/calico.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart NetworkManager
+
+# https://docs.tigera.io/calico/latest/operations/calicoctl/install
+
+- name: Install calicoctl as a kubectl plugin on a single host
+  ansible.builtin.get_url:
+   url: https://github.com/projectcalico/calico/releases/download/v3.27.3/calicoctl-linux-amd64
+   dest: /usr/local/bin/kubectl-calico
+   mode: '0755'
+
 - name: Create a directory /etc/containerd
   ansible.builtin.file:
     path: /etc/containerd
